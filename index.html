@@ -1,3 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feria de Utrera 2027</title>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background-color: #fdf6e3;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 100px 0 0 0; /* Espacio para la barra de aviso y el menú */
+            margin: 0;
+        }
 
-<!-- saved from url=(0068)file:///C:/Users/josea/Desktop/feria%20de%20utrera%202027/index.html -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"></head><body></body></html>
+        /* BARRA SUPERIOR DE AVISOS (Estilo Tienda) */
+        .barra-aviso {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f1c40f; /* Amarillo potente */
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 8px 0;
+            z-index: 1001;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+        }
+
+        /* BARRA DE NAVEGACIÓN (MENÚ) */
+        nav {
+            position: fixed;
+            top: 33px; /* Colocado justo debajo de la barra amarilla */
+            left: 0;
+            width: 100%;
+            background-color: #2c3e50;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background 0.3s ease;
+        }
+        nav a:hover {
+            background-color: #e74c3c;
+        }
+
+        h1 {
+            color: #c0392b;
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+        .subtitulo {
+            color: #555;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        /* Contador */
+        .caja-contador {
+            background: #2c3e50;
+            color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .caja-contador h3 {
+            margin: 0 0 10px 0;
+            color: #f39c12;
+            font-size: 18px;
+        }
+        .temporizador {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .bloque-tiempo {
+            background: #34495e;
+            padding: 8px 12px;
+            border-radius: 8px;
+            min-width: 60px;
+        }
+        .numero {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+            display: block;
+        }
+        .etiqueta {
+            font-size: 12px;
+            color: #bdc3c7;
+            text-transform: uppercase;
+        }
+
+        /* Contenido Principal */
+        .contenido-principal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto 30px auto;
+            flex-direction: row; 
+            padding: 0 15px;
+        }
+        .banner-feria {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .contenedor {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: left;
+            box-sizing: border-box;
+        }
+        h2 {
+            color: #d35400;
+            border-bottom: 2px solid #f39c12;
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+        .contenedor ul {
+            line-height: 1.8;
+            color: #333;
+            font-size: 17px;
+            padding-left: 0;
+            list-style: none;
+        }
+        .contenedor ul li {
+            margin-bottom: 10px;
+        }
+
+        /* SECCIÓN DE SORTEOS */
+        .seccion-sorteos {
+            max-width: 900px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            border: 2px solid #f39c12;
+        }
+        .seccion-sorteos h2 {
+            color: #c0392b;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .bloques-sorteos {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .tarjeta-sorteo {
+            flex: 1;
+            min-width: 280px;
+            background: #fffdf9;
+            border: 1px solid #f39c12;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+        }
+        .tarjeta-sorteo h3 {
+            margin-top: 0;
+            color: #d35400;
+        }
+        .imagen-sorteo {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Sección del Plano del Recinto */
+        .seccion-plano {
+            max-width: 900px;
+            margin: 40px auto 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+        .seccion-plano h2 {
+            color: #c0392b;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .imagen-plano {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border-radius: 10px;
+            border: 2px solid #f39c12;
+        }
+
+        /* Sección Redes Sociales */
+        .seccion-redes {
+            margin-top: 40px;
+            padding: 25px 15px 40px 15px;
+            border-top: 2px dashed #e0d5c1;
+        }
+        .seccion-redes h3 {
+            color: #c0392b;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .galeria-redes {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .tarjeta-red {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .captura-red {
+            width: 100%;
+            max-width: 270px;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        .captura-red:hover {
+            transform: scale(1.03);
+        }
+
+        /* Pie de Página (Footer) */
+        footer {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 25px 15px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        footer p {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            body { padding-top: 130px; }
+            nav { top: 50px; }
+            h1 { font-size: 28px; }
+            .contenido-principal { flex-direction: column; }
+            .banner-feria, .contenedor { max-width: 100%; }
+            .bloque-tiempo { min-width: 45px; padding: 6px 8px; }
+            .numero { font-size: 18px; }
+            .galeria-redes { flex-direction: column; align-items: center; }
+            nav ul { gap: 8px; }
+            nav a { font-size: 13px; padding: 5px 10px; }
+        }
+    </style>
+</head>
+<body id="inicio">
+
+    <!-- BARRA SUPERIOR DE AVISOS -->
+    <div class="barra-aviso">
+        📢 ¡ÚLTIMO SORTEO PUBLICADO! Consulta la zona de sorteos abajo 🎁
+    </div>
+
+    <!-- MENÚ DE NAVEGACIÓN -->
+    <nav>
+        <ul>
+            <li><a href="#inicio">🏠 Inicio</a></li>
+            <li><a href="#info">📅 Información</a></li>
+            <li><a href="#sorteos">🎁 Sorteos</a></li>
+            <li><a href="#plano">🗺️ Plano</a></li>
+            <li><a href="#redes">📱 Redes Sociales</a></li>
+        </ul>
+    </nav>
+
+    <h1>Bienvenido a la Feria de Utrera 2027 🎡</h1>
+    <p class="subtitulo">¡Prepárate para la mejor fiesta del año!</p>
+
+    <!-- Cuenta Atrás -->
+    <div class="caja-contador">
+        <h3>⏳ Cuenta Atrás para la Feria 2027</h3>
+        <div class="temporizador">
+            <div class="bloque-tiempo">
+                <span class="numero" id="dias">00</span>
+                <span class="etiqueta">Días</span>
+            </div>
+            <div class="bloque-tiempo">
+                <span class="numero" id="horas">00</span>
+                <span class="etiqueta">Horas</span>
+            </div>
+            <div class="bloque-tiempo">
+                <span class="numero" id="minutos">00</span>
+                <span class="etiqueta">Min.</span>
+            </div>
+            <div class="bloque-tiempo">
+                <span class="numero" id="segundos">00</span>
+                <span class="etiqueta">Seg.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información Principal -->
+    <div class="contenido-principal" id="info">
+        <!-- Banner -->
+        <img src="Gemini_Generated_Image_47ahgt47ahgt47ah.png" alt="Feria de Utrera 2027 Banner" class="banner-feria">
+
+        <!-- Información -->
+        <div class="contenedor">
+            <h2>📅 Información Destacada</h2>
+            <ul>
+                <li>🎡 <strong>Feria y Fiestas de Nuestra Señora de Consolación</strong></li>
+                <li>🎥 <strong>Informando desde 2021</strong></li>
+                <li>✨ <strong>Alumbrado • Atracciones • Casetas</strong></li>
+                <li>📅 <strong>08 - 11 Septiembre 2027</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE SORTEOS -->
+    <div class="seccion-sorteos" id="sorteos">
+        <h2>🎁 Zona de Sorteos Feria de Utrera</h2>
+        <div class="bloques-sorteos">
+            
+            <!-- Sorteo Reciente / Pasado -->
+            <div class="tarjeta-sorteo">
+                <h3>🏆 Sorteo Reciente: Super Olla</h3>
+                <img src="superolla.png" alt="Sorteo Super Olla" class="imagen-sorteo">
+                <p><strong>Estado:</strong> Finalizado ✅</p>
+                <p>🎉 <strong>Ganador/a:</strong> [Escribe el nombre aquí]</p>
+                <p>¡Muchas gracias a todos por participar en el Sorteazo de la Super Olla!</p>
+            </div>
+
+            <!-- Futuro Sorteo -->
+            <div class="tarjeta-sorteo">
+                <h3>🔮 Próximo Sorteo</h3>
+                <p><strong>Estado:</strong> Muy Pronto ⏳</p>
+                <p>¡Estamos preparando nuevos sorteos exclusivos para nuestros seguidores!</p>
+                <p>👉 <strong>¿Cómo participar?</strong> Síguenos en Instagram y TikTok para enterarte el primero cuando lo publiquemos.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Sección del Plano del Recinto -->
+    <div class="seccion-plano" id="plano">
+        <h2>🗺️ Plano del Recinto Ferial</h2>
+        <a href="mapas.jpg" target="_blank">
+            <img src="mapas.jpg" alt="Plano del Recinto Ferial de Utrera" class="imagen-plano">
+        </a>
+        <p style="color: #777; font-size: 14px; margin-top: 10px;">(Haz clic en la imagen para verla en grande)</p>
+    </div>
+
+    <!-- Sección de Redes Sociales -->
+    <div class="seccion-redes" id="redes">
+        <h3>📱 ¡Síguenos en nuestras Redes Sociales!</h3>
+        <div class="galeria-redes">
+            
+            <!-- Instagram -->
+            <div class="tarjeta-red">
+                <a href="https://www.instagram.com/feria_de_utrera_2026_" target="_blank">
+                    <img src="instagram.jpg" alt="Instagram Feria de Utrera" class="captura-red">
+                </a>
+            </div>
+
+            <!-- TikTok -->
+            <div class="tarjeta-red">
+                <a href="https://www.tiktok.com/@feria_de_utrera_2026" target="_blank">
+                    <img src="tiktok.jpg" alt="TikTok Feria de Utrera" class="captura-red">
+                </a>
+            </div>
+
+            <!-- YouTube -->
+            <div class="tarjeta-red">
+                <a href="https://www.youtube.com/@FERIA_DE_UTRERA2026" target="_blank">
+                    <img src="youtube.jpg" alt="YouTube Feria de Utrera" class="captura-red">
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Pie de Página (Footer) -->
+    <footer>
+        <p><strong>Feria y Fiestas de Nuestra Señora de Consolación de Utrera</strong></p>
+        <p>© 2027 Portal Informativo de la Feria • Creado con pasión para todos los utreranos</p>
+    </footer>
+
+    <!-- JavaScript del contador -->
+    <script>
+        const fechaFeria = new Date('September 8, 2027 00:00:00').getTime();
+
+        function actualizarContador() {
+            const ahora = new Date().getTime();
+            const diferencia = fechaFeria - ahora;
+
+            if (diferencia > 0) {
+                const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+                const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+                const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+                document.getElementById('dias').innerText = dias < 10 ? '0' + dias : dias;
+                document.getElementById('horas').innerText = horas < 10 ? '0' + horas : horas;
+                document.getElementById('minutos').innerText = minutos < 10 ? '0' + minutos : minutos;
+                document.getElementById('segundos').innerText = segundos < 10 ? '0' + segundos : segundos;
+            } else {
+                document.querySelector('.caja-contador').innerHTML = "<h3>🎉 ¡Ya estamos en Feria! 💃🕺</h3>";
+            }
+        }
+
+        setInterval(actualizarContador, 1000);
+        actualizarContador();
+    </script>
+
+</body>
+</html>
