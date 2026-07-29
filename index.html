@@ -47,7 +47,7 @@
             padding: 10px 0;
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             flex-wrap: wrap;
         }
         nav a {
@@ -55,7 +55,7 @@
             text-decoration: none;
             font-weight: bold;
             font-size: 15px;
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 20px;
             transition: background 0.3s ease;
         }
@@ -287,17 +287,19 @@
 
     <!-- BARRA SUPERIOR DE AVISOS -->
     <div class="barra-aviso">
-        📢 ¡ÚLTIMO SORTEO PUBLICADO! Consulta la zona de sorteos abajo 🎁
+        📢 Esta página web se actualizará con todas las novedades, fechas y cartel oficial una vez finalice la <strong>edición de la Feria de Utrera 2027
     </div>
 
-    <!-- MENÚ DE NAVEGACIÓN -->
+    <!-- MENÚ DE NAVEGACIÓN ACTUALIZADO -->
     <nav>
         <ul>
             <li><a href="#inicio">🏠 Inicio</a></li>
             <li><a href="#info">📅 Información</a></li>
+            <li><a href="#juego">🎮 Juego</a></li>
             <li><a href="#sorteos">🎁 Sorteos</a></li>
             <li><a href="#plano">🗺️ Plano</a></li>
             <li><a href="#redes">📱 Redes Sociales</a></li>
+            <li><a href="#contacto">📩 Contacto</a></li>
         </ul>
     </nav>
 
@@ -344,6 +346,119 @@
         </div>
     </div>
 
+    <!-- SECCIÓN MINIJUEGO DE LA FERIA -->
+    <div class="seccion-juego" id="juego" style="max-width: 900px; margin: 40px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid #3498db; box-sizing: border-box; text-align: center;">
+        <h2 style="color: #2980b9; margin-top: 0;">🎮 ¡Atrapa el Rebujito!</h2>
+        <p style="color: #555;">Toca o haz clic en los objetos feriantes antes de que desaparezcan. ¡Tienes 30 segundos!</p>
+
+        <!-- Marcardor y Tiempo -->
+        <div style="display: flex; justify-content: center; gap: 30px; font-size: 20px; font-weight: bold; margin-bottom: 15px;">
+            <span style="color: #27ae60;">Puntos: <span id="puntos-juego">0</span></span>
+            <span style="color: #c0392b;">Tiempo: <span id="tiempo-juego">30</span>s</span>
+        </div>
+
+        <!-- Tablero de Juego -->
+        <div id="tablero-juego" style="width: 100%; height: 300px; background: #f0f8ff; border: 2px dashed #3498db; border-radius: 12px; position: relative; overflow: hidden; margin: 0 auto 15px auto;">
+            <p id="mensaje-inicio" style="margin-top: 130px; font-weight: bold; color: #7f8c8d;">¡Pulsa "Empezar Juego" para jugar!</p>
+        </div>
+
+        <button id="btn-juego" onclick="empezarJuego()" style="background-color: #27ae60; color: white; border: none; padding: 12px 25px; font-size: 16px; font-weight: bold; border-radius: 25px; cursor: pointer; transition: 0.3s;">
+            ▶️ Empezar Juego
+        </button>
+    </div>
+
+    <!-- LÓGICA DEL JUEGO -->
+    <script>
+        let puntos = 0;
+        let tiempo = 30;
+        let intervaloTiempo;
+        let intervaloObjetos;
+        let jugando = false;
+
+        const elementosFeria = ['🏮', '🍷', '🎸', '💃', '🎡'];
+
+        function empezarJuego() {
+            if (jugando) return;
+            
+            jugando = true;
+            puntos = 0;
+            tiempo = 30;
+            document.getElementById('puntos-juego').innerText = puntos;
+            document.getElementById('tiempo-juego').innerText = tiempo;
+            document.getElementById('tablero-juego').innerHTML = '';
+            document.getElementById('btn-juego').style.display = 'none';
+
+            // Contador de tiempo
+            intervaloTiempo = setInterval(() => {
+                tiempo--;
+                document.getElementById('tiempo-juego').innerText = tiempo;
+                if (tiempo <= 0) {
+                    terminarJuego();
+                }
+            }, 1000);
+
+            // Generador de objetos
+            intervaloObjetos = setInterval(crearObjeto, 600);
+        }
+
+        function crearObjeto() {
+            if (!jugando) return;
+
+            const tablero = document.getElementById('tablero-juego');
+            const objeto = document.createElement('div');
+            
+            // Seleccionar icono al azar
+            const icono = elementosFeria[Math.floor(Math.random() * elementosFeria.length)];
+            objeto.innerText = icono;
+
+            // Estilos del objeto
+            objeto.style.position = 'absolute';
+            objeto.style.fontSize = '35px';
+            objeto.style.cursor = 'pointer';
+            objeto.style.userSelect = 'none';
+            
+            // Posición aleatoria dentro del tablero
+            const maxX = tablero.clientWidth - 50;
+            const maxY = tablero.clientHeight - 50;
+            objeto.style.left = Math.random() * maxX + 'px';
+            objeto.style.top = Math.random() * maxY + 'px';
+
+            // Evento al hacer clic/tocar
+            objeto.onclick = function() {
+                puntos += 10;
+                document.getElementById('puntos-juego').innerText = puntos;
+                tablero.removeChild(objeto);
+            };
+
+            tablero.appendChild(objeto);
+
+            // El objeto desaparece tras 1.2 segundos si no se toca
+            setTimeout(() => {
+                if (tablero.contains(objeto)) {
+                    tablero.removeChild(objeto);
+                }
+            }, 1200);
+        }
+
+        function terminarJuego() {
+            jugando = false;
+            clearInterval(intervaloTiempo);
+            clearInterval(intervaloObjetos);
+
+            const tablero = document.getElementById('tablero-juego');
+            tablero.innerHTML = `
+                <div style="margin-top: 100px;">
+                    <h3 style="color: #27ae60; margin: 0;">🎉 ¡Juego Terminado!</h3>
+                    <p style="font-size: 18px; margin: 10px 0;">Puntuación final: <strong>${puntos} puntos</strong></p>
+                </div>
+            `;
+            
+            const btn = document.getElementById('btn-juego');
+            btn.innerText = '🔄 Jugar de nuevo';
+            btn.style.display = 'inline-block';
+        }
+    </script>
+
     <!-- SECCIÓN DE SORTEOS -->
     <div class="seccion-sorteos" id="sorteos">
         <h2>🎁 Zona de Sorteos Feria de Utrera</h2>
@@ -361,7 +476,7 @@
             <!-- Futuro Sorteo -->
             <div class="tarjeta-sorteo">
                 <h3>🔮 Próximo Sorteo</h3>
-                <p><strong>Estado:</strong> Muy Pronto ⏳</p>
+                <p><strong>Estado:</strong>  Muy pronto... 👀✨⏳</p>
                 <p>¡Estamos preparando nuevos sorteos exclusivos para nuestros seguidores!</p>
                 <p>👉 <strong>¿Cómo participar?</strong> Síguenos en Instagram y TikTok para enterarte el primero cuando lo publiquemos.</p>
             </div>
@@ -369,46 +484,286 @@
         </div>
     </div>
 
-    <!-- Sección del Plano del Recinto -->
-    <div class="seccion-plano" id="plano">
-        <h2>🗺️ Plano del Recinto Ferial</h2>
+    <!-- SECCIÓN DEL PLANO Y RELACIÓN DE CASETAS -->
+    <div class="seccion-plano" id="plano" style="max-width: 900px; margin: 40px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid #f39c12; box-sizing: border-box;">
+        
+        <h2 style="color: #c0392b; text-align: center; margin-top: 0;">🗺️ Plano y Callejero del Recinto Ferial</h2>
+        <p style="color: #555; text-align: center; margin-bottom: 20px;">Reordenación y distribución de las calles del recinto ferial</p>
+
+        <!-- Imagen del Plano -->
         <a href="mapas.jpg" target="_blank">
-            <img src="mapas.jpg" alt="Plano del Recinto Ferial de Utrera" class="imagen-plano">
+            <img src="mapas.jpg" alt="Plano de calles del Recinto Ferial de Utrera" class="imagen-plano" style="width: 100%; height: auto; border-radius: 10px; border: 2px solid #f39c12;">
         </a>
-        <p style="color: #777; font-size: 14px; margin-top: 10px;">(Haz clic en la imagen para verla en grande)</p>
-    </div>
+        <p style="color: #777; font-size: 14px; margin-top: 8px; text-align: center;">(Haz clic en el plano para verlo ampliado)</p>
 
-    <!-- Sección de Redes Sociales -->
-    <div class="seccion-redes" id="redes">
-        <h3>📱 ¡Síguenos en nuestras Redes Sociales!</h3>
-        <div class="galeria-redes">
-            
-            <!-- Instagram -->
-            <div class="tarjeta-red">
-                <a href="https://www.instagram.com/feria_de_utrera_2026/" target="_blank">
-                    <img src="instagram.jpg" alt="Instagram Feria de Utrera" class="captura-red">
-                </a>
-            </div>
+        <hr style="border: 0; border-top: 1px dashed #f39c12; margin: 30px 0;">
 
-            <!-- TikTok -->
-            <div class="tarjeta-red">
-                <a href="https://www.tiktok.com/@feria_de_utrera_2026" target="_blank">
-                    <img src="tiktok.jpg" alt="TikTok Feria de Utrera" class="captura-red">
-                </a>
-            </div>
+        <!-- RELACIÓN DE CASETAS POR CALLE -->
+        <div id="casetas">
+            <h3 style="color: #d35400; text-align: center; margin-bottom: 10px;">🎪 Relación de Casetas Adjudicadas por Calles</h3>
+            <p style="color: #666; text-align: center; font-size: 14px; margin-bottom: 25px;">Haz clic en cada calle para ver la lista de casetas y sus números:</p>
 
-            <!-- YouTube -->
-            <div class="tarjeta-red">
-                <a href="https://www.youtube.com/@FERIA_DE_UTRERA2026" target="_blank">
-                    <img src="youtube.jpg" alt="YouTube Feria de Utrera" class="captura-red">
-                </a>
-            </div>
+            <style>
+                .desplegable-calle {
+                    background-color: #fffdf9;
+                    border: 1px solid #f39c12;
+                    border-radius: 8px;
+                    margin-bottom: 10px;
+                    overflow: hidden;
+                    text-align: left;
+                }
+                .titulo-calle {
+                    background-color: #fef5e7;
+                    color: #c0392b;
+                    padding: 12px 18px;
+                    font-weight: bold;
+                    font-size: 16px;
+                    cursor: pointer;
+                    margin: 0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    user-select: none;
+                }
+                .titulo-calle:hover {
+                    background-color: #fdebd0;
+                }
+                .lista-casetas {
+                    padding: 15px 20px;
+                    margin: 0;
+                    list-style: none;
+                    line-height: 1.9;
+                    color: #333;
+                    border-top: 1px solid #fadbd8;
+                }
+                .lista-casetas li {
+                    border-bottom: 1px dashed #eee;
+                }
+                .lista-casetas li:last-child {
+                    border-bottom: none;
+                }
+                .num-caseta {
+                    color: #d35400;
+                    font-weight: bold;
+                }
+            </style>
+
+            <!-- CALLE ALEGRÍA -->
+            <details class="desplegable-calle">
+                <summary class="titulo-calle">📍 Calle Alegría <span>▼</span></summary>
+                <ul class="lista-casetas">
+                    <li>Chiringuito Antonio Fuli (pendiente) – <span class="num-caseta">nº 2</span></li>
+                    <li>Chiringuito El Fuli – <span class="num-caseta">nº 3</span></li>
+                    <li>Parcela libre (familiar / entidad) – <span class="num-caseta">nº 4</span></li>
+                    <li>La Última y Nos Vamos – <span class="num-caseta">nº 6</span></li>
+                    <li>Peña Juanma – <span class="num-caseta">nº 8-12</span></li>
+                    <li>Parcela libre (pública comercial) – <span class="num-caseta">nº 14-16</span></li>
+                </ul>
+            </details>
+
+            <!-- CALLE BULERÍA -->
+            <details class="desplegable-calle">
+                <summary class="titulo-calle">📍 Calle Bulería <span>▼</span></summary>
+                <ul class="lista-casetas">
+                    <li>Lo Jaramago – <span class="num-caseta">nº 1</span></li>
+                    <li>El Sitio de Mi Manuela – <span class="num-caseta">nº 2</span></li>
+                    <li>Utrera y Olé – <span class="num-caseta">nº 3-5</span></li>
+                    <li>El Hormiguero – <span class="num-caseta">nº 4</span></li>
+                    <li>La Cachifa – <span class="num-caseta">nº 6</span></li>
+                    <li>Peña Los Quintero – <span class="num-caseta">nº 7</span></li>
+                    <li>Los Trasnochadores – <span class="num-caseta">nº 8-10</span></li>
+                    <li>Casa Segura – <span class="num-caseta">nº 9</span></li>
+                    <li>Bulería 3 – <span class="num-caseta">nº 11</span></li>
+                    <li>Peña Matute – <span class="num-caseta">nº 12-16</span></li>
+                    <li>Los Canillas – <span class="num-caseta">nº 13</span></li>
+                    <li>Los Estartaos – <span class="num-caseta">nº 15</span></li>
+                    <li>Los Bodegas – <span class="num-caseta">nº 17</span></li>
+                    <li>Peña Curro Durán – <span class="num-caseta">nº 18-20</span></li>
+                    <li>Algarabía – <span class="num-caseta">nº 19</span></li>
+                    <li>Las Espigas – <span class="num-caseta">nº 21</span></li>
+                    <li>El Alboroto – <span class="num-caseta">nº 22-24</span></li>
+                    <li>Amigos del Voley – <span class="num-caseta">nº 23</span></li>
+                    <li>Jóvenes Carrozas – <span class="num-caseta">nº 25</span></li>
+                    <li>Los 20 Gremios – <span class="num-caseta">nº 26</span></li>
+                    <li>Yerbagüena – <span class="num-caseta">nº 27</span></li>
+                    <li>Que No Te Falte Ni Gloria – <span class="num-caseta">nº 28</span></li>
+                    <li>La Madriguera – <span class="num-caseta">nº 29</span></li>
+                    <li>Inés y Luis – <span class="num-caseta">nº 30</span></li>
+                    <li>A Mí de Qué – <span class="num-caseta">nº 31</span></li>
+                    <li>Amigos del Caballo – <span class="num-caseta">nº 32</span></li>
+                    <li>El Embrujo – <span class="num-caseta">nº 33</span></li>
+                    <li>Amigos de Ginés – <span class="num-caseta">nº 34</span></li>
+                    <li>Amigos de Fernanda y Bernarda – <span class="num-caseta">nº 35</span></li>
+                    <li>La Espuela – <span class="num-caseta">nº 36</span></li>
+                    <li>Almazara – <span class="num-caseta">nº 38</span></li>
+                </ul>
+            </details>
+
+            <!-- CALLE CANTIÑA -->
+            <details class="desplegable-calle">
+                <summary class="titulo-calle">📍 Calle Cantiña <span>▼</span></summary>
+                <ul class="lista-casetas">
+                    <li>C.D. Murillo – <span class="num-caseta">nº 1</span></li>
+                    <li>Peña Al Relente – <span class="num-caseta">nº 2-4</span></li>
+                    <li>Arme Hueco – <span class="num-caseta">nº 3</span></li>
+                    <li>Los Enreones – <span class="num-caseta">nº 5</span></li>
+                    <li>Si Hay Que Ir Se Va – <span class="num-caseta">nº 6</span></li>
+                    <li>Los Jártibles – <span class="num-caseta">nº 7</span></li>
+                    <li>Vera Mañana – <span class="num-caseta">nº 8</span></li>
+                    <li>Los Compadres – <span class="num-caseta">nº 9</span></li>
+                    <li>Club Utrera Atletismo – <span class="num-caseta">nº 10-12</span></li>
+                    <li>Los Últimos en Irnos – <span class="num-caseta">nº 11</span></li>
+                    <li>Peña Ciclista Correos – <span class="num-caseta">nº 13-15</span></li>
+                    <li>Acupa Mía – <span class="num-caseta">nº 14</span></li>
+                    <li>Peña Flamenca Ciudad de Utrera – <span class="num-caseta">nº 17-19</span></li>
+                </ul>
+            </details>
+
+            <!-- CALLE CARACOLES -->
+            <details class="desplegable-calle">
+                <summary class="titulo-calle">📍 Calle Caracoles <span>▼</span></summary>
+                <ul class="lista-casetas">
+                    <li>Porque Puedo – <span class="num-caseta">nº 2</span></li>
+                </ul>
+            </details>
+
+            <!-- CALLE FANDANGO -->
+            <details class="desplegable-calle">
+                <summary class="titulo-calle">📍 Calle Fandango <span>▼</span></summary>
+                <ul class="lista-casetas">
+                    <li>Asociación Musical Utrerana – <span class="num-caseta">nº 2-4</span></li>
+                    <li>Ahora Venimos – <span class="num-caseta">nº 6</span></li>
+                    <li>Que No Nos Falte de Ná – <span class="num-caseta">nº 8</span></li>
+                    <li>Vamos Pa’lante – <span class="num-caseta">nº 10</span></li>
+                    <li>El Aljibe – <span class="num-caseta">nº 12</span></li>
+                    <li>Para Mejor Probeber – <span class="num-caseta">nº 14</span></li>
+                    <li>Peña Vinagre – <span class="num-caseta">nº 16</span></li>
+                    <li>Albahaca – <span class="num-caseta">nº 18-20</span></li>
+                    <li>Mi Primera Comunión – <span class="num-caseta">nº 22</span></li>
+                    <li>La Flamenca – <span class="num-caseta">nº 24</span></li>
+                    <li>Los del Bombo – <span class="num-caseta">nº 26</span></li>
+                </ul>
+            </details>
+
+            <!-- CALLE MARTINETE -->
+            <details class="desplegable-calle">
+                <summary class="titulo-calle">📍 Calle Martinete <span>▼</span></summary>
+                <ul class="lista-casetas">
+                    <li>Bamboleo X Lunares – <span class="num-caseta">nº 1, 3, 5 y 7</span></li>
+                    <li>Los Muchachos – <span class="num-caseta">nº 9</span></li>
+                </ul>
+            </details>
+
+            <!-- CALLE RUMBA -->
+            <details class="desplegable-calle">
+                <summary class="titulo-calle">📍 Calle Rumba <span>▼</span></summary>
+                <ul class="lista-casetas">
+                    <li>Los Apretaos – <span class="num-caseta">nº 1-3</span></li>
+                    <li>La Amistad – <span class="num-caseta">nº 5</span></li>
+                    <li>Hasta Aquí Hemos Llegado – <span class="num-caseta">nº 7</span></li>
+                </ul>
+            </details>
+
+            <!-- PLAZOLETA DEL JALEO -->
+            <details class="desplegable-calle">
+                <summary class="titulo-calle">📍 Plazoleta del Jaleo <span>▼</span></summary>
+                <ul class="lista-casetas">
+                    <li>Chiringuito Cristóbal – <span class="num-caseta">nº 2</span></li>
+                    <li>Los Muchachos – <span class="num-caseta">nº 4</span></li>
+                </ul>
+            </details>
+
+            <!-- CALLE SEGUIRILLA -->
+            <details class="desplegable-calle">
+                <summary class="titulo-calle">📍 Calle Seguirilla <span>▼</span></summary>
+                <ul class="lista-casetas">
+                    <li>Amigos del Aire – <span class="num-caseta">nº 2</span></li>
+                    <li>Amigos Peña El Búcaro – <span class="num-caseta">nº 4-6</span></li>
+                    <li>Er Farolillo – <span class="num-caseta">nº 8</span></li>
+                </ul>
+            </details>
+
+            <!-- CALLE SOLEÁ -->
+            <details class="desplegable-calle">
+                <summary class="titulo-calle">📍 Calle Soleá <span>▼</span></summary>
+                <ul class="lista-casetas">
+                    <li>Los Primos – <span class="num-caseta">nº 1</span></li>
+                    <li>El Mantoncillo – <span class="num-caseta">nº 3</span></li>
+                    <li>El Toro y la Luna – <span class="num-caseta">nº 5</span></li>
+                    <li>Que Nos Quiten lo Bailao – <span class="num-caseta">nº 7</span></li>
+                    <li>La Luna – <span class="num-caseta">nº 9</span></li>
+                    <li>Justicia Ciega – <span class="num-caseta">nº 11</span></li>
+                    <li>Er Candí del Almazara – <span class="num-caseta">nº 13</span></li>
+                    <li>Los Perlas y Olé – <span class="num-caseta">nº 15</span></li>
+                    <li>Er Quinqué – <span class="num-caseta">nº 17</span></li>
+                    <li>Los Talegas Apalancaos – <span class="num-caseta">nº 19</span></li>
+                    <li>El Genio Alegre – <span class="num-caseta">nº 21</span></li>
+                </ul>
+            </details>
+
+            <!-- CALLE TONÁ -->
+            <details class="desplegable-calle">
+                <summary class="titulo-calle">📍 Calle Toná <span>▼</span></summary>
+                <ul class="lista-casetas">
+                    <li>Lo Que Diga Mi Mujer – <span class="num-caseta">nº 1</span></li>
+                    <li>Veteranos de Utrera – <span class="num-caseta">nº 3</span></li>
+                    <li>El Compás – <span class="num-caseta">nº 5</span></li>
+                    <li>Alegría 76, Pepa Utrera – <span class="num-caseta">nº 7</span></li>
+                    <li>La Lastiquera – <span class="num-caseta">nº 9</span></li>
+                    <li>La Cayetana – <span class="num-caseta">nº 11</span></li>
+                    <li>Los Romeros – <span class="num-caseta">nº 16</span></li>
+                    <li>Las Que M’Entran – <span class="num-caseta">nº 18</span></li>
+                    <li>Los Ducalitos – <span class="num-caseta">nº 20</span></li>
+                    <li>Los Revoltosos – <span class="num-caseta">nº 22</span></li>
+                    <li>Peña Bambino – <span class="num-caseta">nº 24</span></li>
+                </ul>
+            </details>
 
         </div>
     </div>
    
+<!-- Sección de Redes Sociales -->
+<div class="seccion-redes" id="redes">
+    <h3>📱 ¡Síguenos en nuestras Redes Sociales!</h3>
+    <div class="galeria-redes">
+
+        <!-- Instagram -->
+        <div class="tarjeta-red">
+            <a href="https://www.instagram.com/feria_de_utrera_2026/" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; font-weight: bold;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e1306c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+                <span>Instagram</span>
+            </a>
+        </div>
+
+        <!-- TikTok -->
+        <div class="tarjeta-red">
+            <a href="https://www.tiktok.com/@feria_de_utrera_2026" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; font-weight: bold;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="#000000">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-2.22V8.2a6.34 6.34 0 1 0 6.34 6.34V9.25a8.27 8.27 0 0 0 4.77 1.49V7.29a4.83 4.83 0 0 1-1-.6z"/>
+                </svg>
+                <span>TikTok</span>
+            </a>
+        </div>
+
+        <!-- YouTube -->
+        <div class="tarjeta-red">
+            <a href="https://www.youtube.com/@FERIA_DE_UTRERA2026" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; font-weight: bold;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="#ff0000">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                <span>YouTube</span>
+            </a>
+        </div>
+
+    </div>
+</div>
+
     <!-- Sección de Unirse y Contacto -->
-    <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #f5f5f5; border-radius: 10px; color: #333333;">
+    <div id="contacto" style="text-align: center; margin: 30px 0; padding: 20px; background-color: #f5f5f5; border-radius: 10px; color: #333333;">
         <h2>🤝 ¡Únete a nosotros o contáctanos!</h2>
         <p>¿Quieres formar parte de nuestro equipo, tienes alguna duda o quieres colaborar?</p>
         <p style="margin-top: 15px;">
@@ -447,14 +802,11 @@
                 document.getElementById('horas').innerText = horas < 10 ? '0' + horas : horas;
                 document.getElementById('minutos').innerText = minutos < 10 ? '0' + minutos : minutos;
                 document.getElementById('segundos').innerText = segundos < 10 ? '0' + segundos : segundos;
-            } else {
-                document.querySelector('.caja-contador').innerHTML = "<h3>🎉 ¡Ya estamos en Feria! 💃🕺</h3>";
             }
         }
 
         setInterval(actualizarContador, 1000);
         actualizarContador();
     </script>
-
 </body>
 </html>
